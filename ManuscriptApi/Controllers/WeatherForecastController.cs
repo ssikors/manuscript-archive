@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace ManuscriptArchiveAPI.Controllers;
+namespace ManuscriptApi.Controllers;
 
 [ApiController]
 [Route("[controller]")]

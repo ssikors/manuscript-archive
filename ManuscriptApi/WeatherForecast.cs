@@ -1,4 +1,4 @@
-namespace ManuscriptArchiveAPI
+namespace ManuscriptApi
 {
     public class WeatherForecast
     {
