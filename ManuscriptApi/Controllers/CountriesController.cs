@@ -10,7 +10,7 @@ namespace ManuscriptApi.Controllers
         private static List<Country> Countries = new List<Country>
         {
             new Country { Id = 1, Name = "Poland", Description = "", IconUrl="https://flagcdn.com/16x12/ua.png" },
-            new Country { Id = 2, Name = "England", Description = "", IconUrl="https://flagcdn.com/16x12/en.png" }
+            new Country { Id = 2, Name = "France", Description = "", IconUrl="https://flagcdn.com/16x12/fr.png" }
         };
 
 
