@@ -11,7 +11,7 @@ namespace ManuscriptApi.Controllers
     {
         private static List<Manuscript> Manuscripts = new List<Manuscript>
         {
-            new Manuscript { Id = 1, Name = "Le Romant des Fables Ovide le Grant", Description = "", AuthorId = 1, CountryId = 2, Tags = [], Url = "https://gallica.bnf.fr/ark:/12148/btv1b525031179/f9.item", YearWritten = 1330},
+            new Manuscript { Id = 1, Name = "Le Romant des Fables Ovide le Grant", Description = "", AuthorId = 1, CountryId = 2, Tags = [new Tag { Id = 1, Name = "Martial", Description = "", SubTags = [] }], Url = "https://gallica.bnf.fr/ark:/12148/btv1b525031179/f9.item", YearWritten = 1330},
             new Manuscript { Id = 2, Name = "Hedwig Manuscript", Description = "", AuthorId = 2, CountryId = 1, Tags = [], Url = "http://commons.wikimedia.org/wiki/File:HedwigManuscriptLiegnitz_b.jpg", YearWritten = 1451},
         };
 

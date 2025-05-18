@@ -5,6 +5,6 @@
         public int Id { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
-        public ICollection<Manuscript> Manuscripts { get; set; }
+        public ICollection<Tag> SubTags { get; set; }
     }
 }
