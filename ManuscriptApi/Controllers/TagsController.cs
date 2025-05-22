@@ -30,13 +30,20 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for adding a Tag
         /// </summary>
         [HttpPost]
-        public ActionResult<Tag> AddTag(Tag Tag)
+        public ActionResult<Tag> AddTag(TagDto tagDto)
         {
-            Tag.Id = Tags.Max(c => c.Id) + 1;
 
-            Tags.Add(Tag);
+            Tag tag = new Tag
+            {
+                Id = Tags.Max(c => c.Id) + 1,
+                Description = tagDto.Description,
+                SubTags = tagDto.SubTags
+            };
 
-            return CreatedAtAction(nameof(AddTag), new { id = Tag.Id }, Tag);
+
+            Tags.Add(tag);
+
+            return CreatedAtAction(nameof(AddTag), new { id = tag.Id }, tag);
         }
 
         /// <summary>
@@ -59,7 +66,7 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for updating a Tag specified by id
         /// </summary>
         [HttpPut("{id}")]
-        public ActionResult UpdateTag(int id, Tag updatedTag)
+        public ActionResult UpdateTag(int id, TagDto updatedTag)
         {
             Tag? Tag = Tags.FirstOrDefault(t => t.Id == id);
 

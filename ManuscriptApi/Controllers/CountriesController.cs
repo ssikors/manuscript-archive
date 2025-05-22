@@ -28,9 +28,16 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for adding a Country
         /// </summary>
         [HttpPost]
-        public ActionResult<Country> AddCountry(Country country)
+        public ActionResult<Country> AddCountry(CountryDto countryDto)
         {
-            country.Id = Countries.Max(c => c.Id) + 1;
+
+            Country country = new Country
+            {
+                Id = Countries.Max(c => c.Id) + 1,
+                Name = countryDto.Name,
+                Description = countryDto.Description,
+                IconUrl = countryDto.IconUrl,
+            };
 
             Countries.Add(country);
 
@@ -57,7 +64,7 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for updating a Country specified by id
         /// </summary>
         [HttpPut("{id}")]
-        public ActionResult UpdateCountry(int id, Country updatedCountry)
+        public ActionResult UpdateCountry(int id, CountryDto updatedCountry)
         {
             Country? country = Countries.FirstOrDefault(c => c.Id == id);
 

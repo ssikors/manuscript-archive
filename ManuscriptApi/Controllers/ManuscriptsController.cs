@@ -30,13 +30,25 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for adding a Manuscript
         /// </summary>
         [HttpPost]
-        public ActionResult<Manuscript> AddManuscript(Manuscript Manuscript)
+        public ActionResult<Manuscript> AddManuscript(ManuscriptDto manuscriptDto)
         {
-            Manuscript.Id = Manuscripts.Max(c => c.Id) + 1;
 
-            Manuscripts.Add(Manuscript);
+            Manuscript manuscript = new Manuscript
+            {
+                Id = Manuscripts.Max(c => c.Id) + 1,
+                Name = manuscriptDto.Name,
+                Description = manuscriptDto.Description,
+                AuthorId = manuscriptDto.AuthorId,
+                Tags = manuscriptDto.Tags,
+                Url = manuscriptDto.Url,
+                CountryId = manuscriptDto.CountryId,
+                YearWritten = manuscriptDto.YearWritten
+            };   
 
-            return CreatedAtAction(nameof(AddManuscript), new { id = Manuscript.Id }, Manuscript);
+
+            Manuscripts.Add(manuscript);
+
+            return CreatedAtAction(nameof(AddManuscript), new { id = manuscript.Id }, manuscript);
         }
 
         /// <summary>
@@ -59,7 +71,7 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for updating a Manuscript specified by id
         /// </summary>
         [HttpPut("{id}")]
-        public ActionResult UpdateManuscript(int id, Manuscript updatedManuscript)
+        public ActionResult UpdateManuscript(int id, ManuscriptDto updatedManuscript)
         {
             Manuscript? Manuscript = Manuscripts.FirstOrDefault(c => c.Id == id);
 

@@ -30,10 +30,17 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for adding a User
         /// </summary>
         [HttpPost]
-        public ActionResult<User> AddUser(User user)
+        public ActionResult<User> AddUser(UserDto userDto)
         {
-            user.Id = Users.Max(c => c.Id) + 1;
+            User user = new User
+            {
+                Id = Users.Max(c => c.Id) + 1,
+                Name = userDto.Name,
+                Email = userDto.Email,
+                isModerator = userDto.isModerator
+            };
 
+      
             Users.Add(user);
 
             return CreatedAtAction(nameof(AddUser), new { id = user.Id }, user);
