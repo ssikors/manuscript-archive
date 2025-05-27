@@ -1,5 +1,7 @@
-﻿using ManuscriptApi.Models;
+﻿
 using System.Xml.Linq;
+using ManuscriptApi.Business.DTOs;
+using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,55 +11,42 @@ namespace ManuscriptApi.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private static List<User> Users = new List<User>
-        {
-            new User { Id = 1, Name = "userName2143", Email = "user@email.test", isModerator = false },
-            new User { Id = 2, Name = "john1234", Email = "user@email.test", isModerator = false },
-        };
+        private readonly IUserService _userService;
 
+        public UsersController(IUserService userService)
+        {
+            _userService = userService;
+        }
 
         /// <summary>
         /// Endpoint for getting all users
         /// </summary>
-        /// <returns>A list of User objects</returns>
         [HttpGet]
-        public ActionResult<IEnumerable<User>> GetUsers()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return Ok(Users);
+            var users = await _userService.GetAllAsync();
+            return Ok(users);
         }
 
         /// <summary>
         /// Endpoint for adding a User
         /// </summary>
         [HttpPost]
-        public ActionResult<User> AddUser(UserDto userDto)
+        public async Task<ActionResult<User>> AddUser(UserDto userDto)
         {
-            User user = new User
-            {
-                Id = Users.Max(c => c.Id) + 1,
-                Name = userDto.Name,
-                Email = userDto.Email,
-                isModerator = userDto.isModerator
-            };
-
-      
-            Users.Add(user);
-
-            return CreatedAtAction(nameof(AddUser), new { id = user.Id }, user);
+            var user = await _userService.CreateAsync(userDto);
+            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
         /// <summary>
         /// Endpoint for getting a User by their id
         /// </summary>
         [HttpGet("{id}")]
-        public ActionResult<User> GetUser(int id)
+        public async Task<ActionResult<User>> GetUser(int id)
         {
-            User? user = Users.FirstOrDefault(u => u.Id == id);
-
+            var user = await _userService.GetByIdAsync(id);
             if (user == null)
-            {
                 return NotFound();
-            }
 
             return Ok(user);
         }
@@ -66,18 +55,11 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for updating a User specified by id
         /// </summary>
         [HttpPut("{id}")]
-        public ActionResult UpdateUser(int id, User updatedUser)
+        public async Task<ActionResult> UpdateUser(int id, UserDto updatedUser)
         {
-            User? user = Users.FirstOrDefault(u => u.Id == id);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            user.Name = updatedUser.Name;
-            user.Email = updatedUser.Email;
-            user.isModerator = updatedUser.isModerator;
+            var updated = await _userService.UpdateAsync(id, updatedUser);
+            if (!updated)
+                return BadRequest("Could not update the user");
 
             return NoContent();
         }
@@ -86,16 +68,12 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for deleting a User specified by id
         /// </summary>
         [HttpDelete("{id}")]
-        public ActionResult DeleteUser(int id)
+        public async Task<ActionResult> DeleteUser(int id)
         {
-            User? user = Users.FirstOrDefault(u => u.Id == id);
+            var deleted = await _userService.DeleteAsync(id);
+            if (!deleted)
+                return BadRequest("Could not delete the user");
 
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            Users.Remove(user);
             return NoContent();
         }
     }

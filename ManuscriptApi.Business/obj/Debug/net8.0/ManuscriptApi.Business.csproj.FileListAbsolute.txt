@@ -13,3 +13,6 @@ D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\refint\Manus
 D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ManuscriptApi.Business.pdb
 D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ManuscriptApi.Business.genruntimeconfig.cache
 D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ref\ManuscriptApi.Business.dll
+D:\Repos\manuscript-archive\ManuscriptApi.Business\bin\Debug\net8.0\ManuscriptApi.DataAccess.dll
+D:\Repos\manuscript-archive\ManuscriptApi.Business\bin\Debug\net8.0\ManuscriptApi.DataAccess.pdb
+D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\Manuscri.24F55165.Up2Date

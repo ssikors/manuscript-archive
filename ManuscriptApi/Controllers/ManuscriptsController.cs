@@ -1,7 +1,9 @@
-﻿using ManuscriptApi.Models;
+﻿
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ManuscriptApi.Business.DTOs;
+using ManuscriptApi.Business.Services;
 
 namespace ManuscriptApi.Controllers
 {
@@ -9,102 +11,66 @@ namespace ManuscriptApi.Controllers
     [ApiController]
     public class ManuscriptsController : ControllerBase
     {
-        private static List<Manuscript> Manuscripts = new List<Manuscript>
-        {
-            new Manuscript { Id = 1, Name = "Le Romant des Fables Ovide le Grant", Description = "", AuthorId = 1, CountryId = 2, Tags = [new Tag { Id = 1, Name = "Martial", Description = "", SubTags = [] }], Url = "https://gallica.bnf.fr/ark:/12148/btv1b525031179/f9.item", YearWritten = 1330},
-            new Manuscript { Id = 2, Name = "Hedwig Manuscript", Description = "", AuthorId = 2, CountryId = 1, Tags = [], Url = "http://commons.wikimedia.org/wiki/File:HedwigManuscriptLiegnitz_b.jpg", YearWritten = 1451},
-        };
+        private readonly IManuscriptService _manuscriptService;
 
+        public ManuscriptsController(IManuscriptService manuscriptService)
+        {
+            _manuscriptService = manuscriptService;
+        }
 
         /// <summary>
-        /// Endpoint for getting all the manuscripts
+        /// Gets all manuscripts
         /// </summary>
-        /// <returns>A list of Manuscript objects</returns>
         [HttpGet]
-        public ActionResult<IEnumerable<Manuscript>> GetManuscripts()
+        public async Task<ActionResult<IEnumerable<Manuscript>>> GetAll()
         {
-            return Ok(Manuscripts);
+            var manuscripts = await _manuscriptService.GetAllAsync();
+            return Ok(manuscripts);
         }
 
         /// <summary>
-        /// Endpoint for adding a Manuscript
-        /// </summary>
-        [HttpPost]
-        public ActionResult<Manuscript> AddManuscript(ManuscriptDto manuscriptDto)
-        {
-
-            Manuscript manuscript = new Manuscript
-            {
-                Id = Manuscripts.Max(c => c.Id) + 1,
-                Name = manuscriptDto.Name,
-                Description = manuscriptDto.Description,
-                AuthorId = manuscriptDto.AuthorId,
-                Tags = manuscriptDto.Tags,
-                Url = manuscriptDto.Url,
-                CountryId = manuscriptDto.CountryId,
-                YearWritten = manuscriptDto.YearWritten
-            };   
-
-
-            Manuscripts.Add(manuscript);
-
-            return CreatedAtAction(nameof(AddManuscript), new { id = manuscript.Id }, manuscript);
-        }
-
-        /// <summary>
-        /// Endpoint for getting a Manuscript by its id
+        /// Gets a manuscript by ID
         /// </summary>
         [HttpGet("{id}")]
-        public ActionResult<Manuscript> GetManuscript(int id)
+        public async Task<ActionResult<Manuscript>> GetById(int id)
         {
-            Manuscript? Manuscript = Manuscripts.FirstOrDefault(c => c.Id == id);
+            var manuscript = await _manuscriptService.GetByIdAsync(id);
+            if (manuscript == null) return NotFound();
 
-            if (Manuscript == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(Manuscript);
+            return Ok(manuscript);
         }
 
         /// <summary>
-        /// Endpoint for updating a Manuscript specified by id
+        /// Creates a new manuscript
+        /// </summary>
+        [HttpPost]
+        public async Task<ActionResult<Manuscript>> Create(ManuscriptDto dto)
+        {
+            var manuscript = await _manuscriptService.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = manuscript.Id }, manuscript);
+        }
+
+        /// <summary>
+        /// Updates an existing manuscript
         /// </summary>
         [HttpPut("{id}")]
-        public ActionResult UpdateManuscript(int id, ManuscriptDto updatedManuscript)
+        public async Task<IActionResult> Update(int id, ManuscriptDto dto)
         {
-            Manuscript? Manuscript = Manuscripts.FirstOrDefault(c => c.Id == id);
-
-            if (Manuscript == null)
-            {
-                return NotFound();
-            }
-
-            Manuscript.Name = updatedManuscript.Name;
-            Manuscript.Description = updatedManuscript.Description;
-            Manuscript.Url = updatedManuscript.Url;
-            Manuscript.AuthorId = updatedManuscript.AuthorId;
-            Manuscript.CountryId = updatedManuscript.CountryId;
-            Manuscript.YearWritten = updatedManuscript.YearWritten;
-            Manuscript.Tags = updatedManuscript.Tags;
+            var updated = await _manuscriptService.UpdateAsync(id, dto);
+            if (!updated) return NotFound();
 
             return NoContent();
         }
 
         /// <summary>
-        /// Endpoint for deleting a Manuscript specified by id
+        /// Deletes (soft deletes) a manuscript
         /// </summary>
         [HttpDelete("{id}")]
-        public ActionResult DeleteManuscript(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            Manuscript? Manuscript = Manuscripts.FirstOrDefault(c => c.Id == id);
+            var deleted = await _manuscriptService.DeleteAsync(id);
+            if (!deleted) return NotFound();
 
-            if (Manuscript == null)
-            {
-                return NotFound();
-            }
-
-            Manuscripts.Remove(Manuscript);
             return NoContent();
         }
     }

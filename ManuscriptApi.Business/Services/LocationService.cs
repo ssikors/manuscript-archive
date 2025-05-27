@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ManuscriptApi.Business.Services
 {
-    public class LocationService
+    public class LocationService : ILocationService
     {
         private readonly ManuscriptDbContext _context;
 

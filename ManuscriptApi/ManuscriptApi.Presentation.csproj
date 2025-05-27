@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ManuscriptApi.Business\ManuscriptApi.Business.csproj" />
     <ProjectReference Include="..\ManuscriptApi.DataAccess\ManuscriptApi.DataAccess.csproj" />
   </ItemGroup>
 

@@ -1,3 +1,4 @@
+using ManuscriptApi.Business.Services;
 using ManuscriptApi.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +19,13 @@ builder.Services.AddSwaggerGen
 );
 
 builder.Services.AddDbContext<ManuscriptDbContext>();
+
+builder.Services.AddScoped<ICountryService, CountryService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<ITagService, TagService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<IManuscriptService, ManuscriptService>();
 
 var app = builder.Build();
 

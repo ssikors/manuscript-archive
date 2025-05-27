@@ -1,5 +1,7 @@
-﻿using ManuscriptApi.Models;
+﻿
 using System.Xml.Linq;
+using ManuscriptApi.Business.DTOs;
+using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,75 +11,58 @@ namespace ManuscriptApi.Controllers
     [ApiController]
     public class TagsController : ControllerBase
     {
-        private static List<Tag> Tags = new List<Tag>
-        {
-            new Tag { Id = 1, Name = "Martial", Description = "", SubTags = [] },
-            new Tag { Id = 2, Name = "Civillian", Description = "", SubTags = []}
-        };
+        private readonly ITagService _tagService;
 
+        public TagsController(ITagService tagService)
+        {
+            _tagService = tagService;
+        }
 
         /// <summary>
         /// Endpoint for getting all the Tags
         /// </summary>
         /// <returns>A list of Tag objects</returns>
         [HttpGet]
-        public ActionResult<IEnumerable<Tag>> GetTags()
+        public async Task<ActionResult<IEnumerable<Tag>>> GetTags()
         {
-            return Ok(Tags);
+            var tags = await _tagService.GetAllAsync();
+            return Ok(tags);
         }
 
         /// <summary>
         /// Endpoint for adding a Tag
         /// </summary>
         [HttpPost]
-        public ActionResult<Tag> AddTag(TagDto tagDto)
+        public async Task<ActionResult<Tag>> AddTag(TagDto tagDto)
         {
-
-            Tag tag = new Tag
-            {
-                Id = Tags.Max(c => c.Id) + 1,
-                Description = tagDto.Description,
-                SubTags = tagDto.SubTags
-            };
-
-
-            Tags.Add(tag);
-
-            return CreatedAtAction(nameof(AddTag), new { id = tag.Id }, tag);
+            var tag = await _tagService.CreateAsync(tagDto);
+            return CreatedAtAction(nameof(GetTag), new { id = tag.Id }, tag);
         }
 
         /// <summary>
         /// Endpoint for getting a Tag by its id
         /// </summary>
         [HttpGet("{id}")]
-        public ActionResult<Tag> GetTag(int id)
+        public async Task<ActionResult<Tag>> GetTag(int id)
         {
-            Tag? Tag = Tags.FirstOrDefault(t => t.Id == id);
+            var tag = await _tagService.GetByIdAsync(id);
 
-            if (Tag == null)
-            {
+            if (tag == null)
                 return NotFound();
-            }
 
-            return Ok(Tag);
+            return Ok(tag);
         }
 
         /// <summary>
         /// Endpoint for updating a Tag specified by id
         /// </summary>
         [HttpPut("{id}")]
-        public ActionResult UpdateTag(int id, TagDto updatedTag)
+        public async Task<IActionResult> UpdateTag(int id, TagDto updatedTag)
         {
-            Tag? Tag = Tags.FirstOrDefault(t => t.Id == id);
+            var success = await _tagService.UpdateAsync(id, updatedTag);
 
-            if (Tag == null)
-            {
-                return NotFound();
-            }
-
-            Tag.Name = updatedTag.Name;
-            Tag.Description = updatedTag.Description;
-            Tag.SubTags = updatedTag.SubTags;
+            if (!success)
+                return BadRequest("Could not update the tag");
 
             return NoContent();
         }
@@ -86,16 +71,13 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for deleting a Tag specified by id
         /// </summary>
         [HttpDelete("{id}")]
-        public ActionResult DeleteTag(int id)
+        public async Task<IActionResult> DeleteTag(int id)
         {
-            Tag? Tag = Tags.FirstOrDefault(t => t.Id == id);
+            var success = await _tagService.DeleteAsync(id);
 
-            if (Tag == null)
-            {
-                return NotFound();
-            }
+            if (!success)
+                return BadRequest("Could not delete the tag");
 
-            Tags.Remove(Tag);
             return NoContent();
         }
     }

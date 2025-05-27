@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ManuscriptApi.Business")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6fc6c1e0034af0f683a0a3614973ea9fcb5cdd7e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3707987e6246058deb2a8a1d38901107388fea6e")]
 [assembly: System.Reflection.AssemblyProductAttribute("ManuscriptApi.Business")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ManuscriptApi.Business")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
