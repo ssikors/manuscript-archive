@@ -1,0 +1,15 @@
+D:\Repos\manuscript-archive\ManuscriptApi.Business\bin\Debug\net8.0\ManuscriptApi.Business.deps.json
+D:\Repos\manuscript-archive\ManuscriptApi.Business\bin\Debug\net8.0\ManuscriptApi.Business.runtimeconfig.json
+D:\Repos\manuscript-archive\ManuscriptApi.Business\bin\Debug\net8.0\ManuscriptApi.Business.dll
+D:\Repos\manuscript-archive\ManuscriptApi.Business\bin\Debug\net8.0\ManuscriptApi.Business.pdb
+D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ManuscriptApi.Business.csproj.AssemblyReference.cache
+D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ManuscriptApi.Business.GeneratedMSBuildEditorConfig.editorconfig
+D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ManuscriptApi.Business.AssemblyInfoInputs.cache
+D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ManuscriptApi.Business.AssemblyInfo.cs
+D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ManuscriptApi.Business.csproj.CoreCompileInputs.cache
+D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ManuscriptApi.Business.sourcelink.json
+D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ManuscriptApi.Business.dll
+D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\refint\ManuscriptApi.Business.dll
+D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ManuscriptApi.Business.pdb
+D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ManuscriptApi.Business.genruntimeconfig.cache
+D:\Repos\manuscript-archive\ManuscriptApi.Business\obj\Debug\net8.0\ref\ManuscriptApi.Business.dll
