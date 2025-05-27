@@ -1,4 +1,7 @@
-﻿using ManuscriptApi.Models;
+﻿
+using System.Threading.Tasks;
+using ManuscriptApi.Business.DTOs;
+using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManuscriptApi.Controllers
@@ -7,39 +10,33 @@ namespace ManuscriptApi.Controllers
     [ApiController]
     public class CountriesController : ControllerBase
     {
-        private static List<Country> Countries = new List<Country>
-        {
-            new Country { Id = 1, Name = "Poland", Description = "", IconUrl="https://flagcdn.com/16x12/ua.png" },
-            new Country { Id = 2, Name = "France", Description = "", IconUrl="https://flagcdn.com/16x12/fr.png" }
-        };
+        private ICountryService _countryService;
 
+
+        public CountriesController(ICountryService countryService)
+        {
+            _countryService = countryService;
+        }
 
         /// <summary>
         /// Endpoint for getting all the countries
         /// </summary>
         /// <returns>A list of Country objects</returns>
         [HttpGet]
-        public ActionResult<IEnumerable<Country>> GetCountries()
+        public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
         {
-            return Ok(Countries);
+            var countries = await _countryService.GetAllAsync();
+
+            return Ok(countries);
         }
 
         /// <summary>
         /// Endpoint for adding a Country
         /// </summary>
         [HttpPost]
-        public ActionResult<Country> AddCountry(CountryDto countryDto)
+        public async Task<ActionResult<Country>> AddCountry(CountryDto countryDto)
         {
-
-            Country country = new Country
-            {
-                Id = Countries.Max(c => c.Id) + 1,
-                Name = countryDto.Name,
-                Description = countryDto.Description,
-                IconUrl = countryDto.IconUrl,
-            };
-
-            Countries.Add(country);
+            Country? country = await _countryService.CreateAsync(countryDto);
 
             return CreatedAtAction(nameof(AddCountry), new {id = country.Id}, country);
         }
@@ -48,9 +45,9 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for getting a Country by its id
         /// </summary>
         [HttpGet("{id}")]
-        public ActionResult<Country> GetCountry(int id)
+        public async Task<ActionResult<Country>> GetCountry(int id)
         {
-            Country? country = Countries.FirstOrDefault(c => c.Id == id);
+            Country? country = await _countryService.GetByIdAsync(id);
 
             if (country == null)
             {
@@ -64,18 +61,14 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for updating a Country specified by id
         /// </summary>
         [HttpPut("{id}")]
-        public ActionResult UpdateCountry(int id, CountryDto updatedCountry)
+        public async Task<ActionResult> UpdateCountry(int id, CountryDto updatedCountry)
         {
-            Country? country = Countries.FirstOrDefault(c => c.Id == id);
+            bool updated = await _countryService.UpdateAsync(id, updatedCountry);
 
-            if (country == null)
+            if (!updated)
             {
-                return NotFound();
+                return BadRequest("Could not update the country");
             }
-
-            country.Name = updatedCountry.Name;
-            country.Description = updatedCountry.Description;
-            country.IconUrl = updatedCountry.IconUrl;
             
             return NoContent();
         }
@@ -84,16 +77,15 @@ namespace ManuscriptApi.Controllers
         /// Endpoint for deleting a Country specified by id
         /// </summary>
         [HttpDelete("{id}")]
-        public ActionResult DeleteCountry(int id)
+        public async Task<ActionResult> DeleteCountry(int id)
         {
-            Country? country = Countries.FirstOrDefault(c => c.Id == id);
+            bool deleted = await _countryService.DeleteAsync(id);
 
-            if (country == null)
+            if (!deleted)
             {
-                return NotFound();
+                return BadRequest("Could not delete country");
             }
 
-            Countries.Remove(country);
             return NoContent();
         }
     }

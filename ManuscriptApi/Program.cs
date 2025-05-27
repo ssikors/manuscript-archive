@@ -1,3 +1,5 @@
+using ManuscriptApi.Presentation;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -14,6 +16,8 @@ builder.Services.AddSwaggerGen
         c.IncludeXmlComments(xmlPath);
     }
 );
+
+builder.Services.AddDbContext<ManuscriptDbContext>();
 
 var app = builder.Build();
 
