@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ManuscriptApi.DataAccess")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3707987e6246058deb2a8a1d38901107388fea6e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+46b2c7df2281810d999674385d8a52e5de61d705")]
 [assembly: System.Reflection.AssemblyProductAttribute("ManuscriptApi.DataAccess")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ManuscriptApi.DataAccess")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
