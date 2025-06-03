@@ -1,5 +1,6 @@
 ﻿
 using System.Threading.Tasks;
+using AutoMapper;
 using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +11,14 @@ namespace ManuscriptApi.Controllers
     [ApiController]
     public class CountriesController : ControllerBase
     {
-        private ICountryService _countryService;
+        private ICrudService<Country> _countryService;
+        private readonly IMapper _mapper;
 
 
-        public CountriesController(ICountryService countryService)
+        public CountriesController(ICrudService<Country> countryService, IMapper mapper)
         {
             _countryService = countryService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -36,7 +39,7 @@ namespace ManuscriptApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Country>> AddCountry(CountryDto countryDto)
         {
-            Country? country = await _countryService.CreateAsync(countryDto);
+            Country? country = await _countryService.CreateAsync(_mapper.Map<Country>(countryDto));
 
             return CreatedAtAction(nameof(AddCountry), new {id = country.Id}, country);
         }
@@ -63,9 +66,11 @@ namespace ManuscriptApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCountry(int id, CountryDto updatedCountry)
         {
-            bool updated = await _countryService.UpdateAsync(id, updatedCountry);
+            var entity = _mapper.Map<Country>(updatedCountry);
 
-            if (!updated)
+            Country? updated = await _countryService.UpdateAsync(entity, id);
+
+            if (updated == null)
             {
                 return BadRequest("Could not update the country");
             }

@@ -18,14 +18,17 @@ builder.Services.AddSwaggerGen
     }
 );
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 builder.Services.AddDbContext<ManuscriptDbContext>();
 
-builder.Services.AddScoped<ICountryService, CountryService>();
-builder.Services.AddScoped<ILocationService, LocationService>();
-builder.Services.AddScoped<ITagService, TagService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IImageService, ImageService>();
-builder.Services.AddScoped<IManuscriptService, ManuscriptService>();
+
+builder.Services.AddScoped<ICrudService<Country>, CountryService>();
+builder.Services.AddScoped<ICrudService<Location>, LocationService>();
+builder.Services.AddScoped<ICrudService<Tag>, TagService>();
+builder.Services.AddScoped<ICrudService<User>, UserService>();
+builder.Services.AddScoped<ICrudService<Image>, ImageService>();
+builder.Services.AddScoped<ICrudService<Manuscript>, ManuscriptService>();
 
 var app = builder.Build();
 

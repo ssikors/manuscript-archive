@@ -1,5 +1,6 @@
 ﻿
 using System.Xml.Linq;
+using AutoMapper;
 using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Http;
@@ -11,11 +12,13 @@ namespace ManuscriptApi.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly ICrudService<User> _userService;
+        private readonly IMapper _mapper;
 
-        public UsersController(IUserService userService)
+        public UsersController(ICrudService<User> userService, IMapper mapper)
         {
             _userService = userService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -34,8 +37,9 @@ namespace ManuscriptApi.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> AddUser(UserDto userDto)
         {
-            var user = await _userService.CreateAsync(userDto);
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            var user = _mapper.Map<User>(userDto);
+            var created = await _userService.CreateAsync(user);
+            return CreatedAtAction(nameof(GetUser), new { id = created.Id }, created);
         }
 
         /// <summary>
@@ -57,8 +61,10 @@ namespace ManuscriptApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateUser(int id, UserDto updatedUser)
         {
-            var updated = await _userService.UpdateAsync(id, updatedUser);
-            if (!updated)
+            var entity = _mapper.Map<User>(updatedUser);
+            var updated = await _userService.UpdateAsync(entity, id);
+
+            if (updated == null)
                 return BadRequest("Could not update the user");
 
             return NoContent();
@@ -71,6 +77,7 @@ namespace ManuscriptApi.Controllers
         public async Task<ActionResult> DeleteUser(int id)
         {
             var deleted = await _userService.DeleteAsync(id);
+
             if (!deleted)
                 return BadRequest("Could not delete the user");
 

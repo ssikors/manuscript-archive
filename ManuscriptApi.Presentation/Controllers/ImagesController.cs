@@ -1,4 +1,5 @@
-﻿using ManuscriptApi.Business.DTOs;
+﻿using AutoMapper;
+using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +10,13 @@ namespace ManuscriptApi.Presentation.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
-        private readonly IImageService  _imageService;
+        private readonly ICrudService<Image> _imageService;
+        private readonly IMapper _mapper;
 
-        public ImagesController(IImageService imageService)
+        public ImagesController(ICrudService<Image> imageService, IMapper mapper)
         {
             _imageService = imageService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -45,8 +48,10 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpPost]
         public async Task<ActionResult<Image>> AddImage(ImageDto imageDto)
         {
-            var image = await _imageService.CreateAsync(imageDto);
-            return CreatedAtAction(nameof(GetImage), new { id = image.Id }, image);
+            var image = _mapper.Map<Image>(imageDto);
+            var created = await _imageService.CreateAsync(image);
+
+            return CreatedAtAction(nameof(GetImage), new { id = created.Id }, created);
         }
 
         /// <summary>
@@ -55,8 +60,10 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateImage(int id, ImageDto imageDto)
         {
-            var updated = await _imageService.UpdateAsync(id, imageDto);
-            if (!updated)
+            var entity = _mapper.Map<Image>(imageDto);
+            var updated = await _imageService.UpdateAsync(entity, id);
+
+            if (updated == null)
                 return BadRequest("Could not update image");
 
             return NoContent();
@@ -69,6 +76,7 @@ namespace ManuscriptApi.Presentation.Controllers
         public async Task<IActionResult> DeleteImage(int id)
         {
             var deleted = await _imageService.DeleteAsync(id);
+
             if (!deleted)
                 return BadRequest("Could not delete image");
 
@@ -76,3 +84,4 @@ namespace ManuscriptApi.Presentation.Controllers
         }
     }
 }
+

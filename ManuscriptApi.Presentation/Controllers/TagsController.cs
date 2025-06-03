@@ -1,5 +1,6 @@
 ﻿
 using System.Xml.Linq;
+using AutoMapper;
 using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Http;
@@ -11,17 +12,18 @@ namespace ManuscriptApi.Controllers
     [ApiController]
     public class TagsController : ControllerBase
     {
-        private readonly ITagService _tagService;
+        private readonly ICrudService<Tag> _tagService;
+        private readonly IMapper _mapper;
 
-        public TagsController(ITagService tagService)
+        public TagsController(ICrudService<Tag> tagService, IMapper mapper)
         {
             _tagService = tagService;
+            _mapper = mapper;
         }
 
         /// <summary>
         /// Endpoint for getting all the Tags
         /// </summary>
-        /// <returns>A list of Tag objects</returns>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tag>>> GetTags()
         {
@@ -35,8 +37,9 @@ namespace ManuscriptApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Tag>> AddTag(TagDto tagDto)
         {
-            var tag = await _tagService.CreateAsync(tagDto);
-            return CreatedAtAction(nameof(GetTag), new { id = tag.Id }, tag);
+            var tag = _mapper.Map<Tag>(tagDto);
+            var created = await _tagService.CreateAsync(tag);
+            return CreatedAtAction(nameof(GetTag), new { id = created.Id }, created);
         }
 
         /// <summary>
@@ -46,7 +49,6 @@ namespace ManuscriptApi.Controllers
         public async Task<ActionResult<Tag>> GetTag(int id)
         {
             var tag = await _tagService.GetByIdAsync(id);
-
             if (tag == null)
                 return NotFound();
 
@@ -59,9 +61,10 @@ namespace ManuscriptApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTag(int id, TagDto updatedTag)
         {
-            var success = await _tagService.UpdateAsync(id, updatedTag);
+            var entity = _mapper.Map<Tag>(updatedTag);
+            var updated = await _tagService.UpdateAsync(entity, id);
 
-            if (!success)
+            if (updated == null)
                 return BadRequest("Could not update the tag");
 
             return NoContent();
@@ -73,9 +76,9 @@ namespace ManuscriptApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTag(int id)
         {
-            var success = await _tagService.DeleteAsync(id);
+            var deleted = await _tagService.DeleteAsync(id);
 
-            if (!success)
+            if (!deleted)
                 return BadRequest("Could not delete the tag");
 
             return NoContent();

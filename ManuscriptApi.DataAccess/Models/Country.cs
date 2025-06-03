@@ -1,5 +1,8 @@
 ﻿
-public class Country
+
+using ManuscriptApi.DataAccess.Models;
+
+public class Country : IModel
 {
     public int Id { get; set; }
 

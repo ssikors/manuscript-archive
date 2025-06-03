@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
+using AutoMapper;
 
 namespace ManuscriptApi.Controllers
 {
@@ -11,11 +12,13 @@ namespace ManuscriptApi.Controllers
     [ApiController]
     public class ManuscriptsController : ControllerBase
     {
-        private readonly IManuscriptService _manuscriptService;
+        private readonly ICrudService<Manuscript> _manuscriptService;
+        private readonly IMapper _mapper;
 
-        public ManuscriptsController(IManuscriptService manuscriptService)
+        public ManuscriptsController(ICrudService<Manuscript> manuscriptService, IMapper mapper)
         {
             _manuscriptService = manuscriptService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -35,7 +38,8 @@ namespace ManuscriptApi.Controllers
         public async Task<ActionResult<Manuscript>> GetById(int id)
         {
             var manuscript = await _manuscriptService.GetByIdAsync(id);
-            if (manuscript == null) return NotFound();
+            if (manuscript == null)
+                return NotFound();
 
             return Ok(manuscript);
         }
@@ -46,8 +50,10 @@ namespace ManuscriptApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Manuscript>> Create(ManuscriptDto dto)
         {
-            var manuscript = await _manuscriptService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = manuscript.Id }, manuscript);
+            var manuscript = _mapper.Map<Manuscript>(dto);
+            var created = await _manuscriptService.CreateAsync(manuscript);
+
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
         /// <summary>
@@ -56,8 +62,11 @@ namespace ManuscriptApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, ManuscriptDto dto)
         {
-            var updated = await _manuscriptService.UpdateAsync(id, dto);
-            if (!updated) return NotFound();
+            var entity = _mapper.Map<Manuscript>(dto);
+            var updated = await _manuscriptService.UpdateAsync(entity, id);
+
+            if (updated == null)
+                return NotFound();
 
             return NoContent();
         }
@@ -69,7 +78,8 @@ namespace ManuscriptApi.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var deleted = await _manuscriptService.DeleteAsync(id);
-            if (!deleted) return NotFound();
+            if (!deleted)
+                return NotFound();
 
             return NoContent();
         }

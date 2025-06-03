@@ -1,4 +1,5 @@
-﻿using ManuscriptApi.Business.DTOs;
+﻿using AutoMapper;
+using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +10,13 @@ namespace ManuscriptApi.Presentation.Controllers
     [ApiController]
     public class LocationsController : ControllerBase
     {
-        private readonly ILocationService _locationService;
+        private readonly ICrudService<Location> _locationService;
+        private readonly IMapper _mapper;
 
-        public LocationsController(ILocationService locationService)
+        public LocationsController(ICrudService<Location> locationService, IMapper mapper)
         {
             _locationService = locationService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -33,8 +36,10 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpPost]
         public async Task<ActionResult<Location>> AddLocation(LocationDto locationDto)
         {
-            var location = await _locationService.CreateAsync(locationDto);
-            return CreatedAtAction(nameof(GetLocation), new { id = location.Id }, location);
+            var location = _mapper.Map<Location>(locationDto);
+            var created = await _locationService.CreateAsync(location);
+
+            return CreatedAtAction(nameof(GetLocation), new { id = created.Id }, created);
         }
 
         /// <summary>
@@ -59,9 +64,10 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateLocation(int id, LocationDto updatedLocation)
         {
-            var updated = await _locationService.UpdateAsync(id, updatedLocation);
+            var entity = _mapper.Map<Location>(updatedLocation);
+            var updated = await _locationService.UpdateAsync(entity, id);
 
-            if (!updated)
+            if (updated == null)
             {
                 return BadRequest("Could not update the location");
             }
