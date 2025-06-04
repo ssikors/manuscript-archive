@@ -1,5 +1,6 @@
 using ManuscriptApi.Business.Services;
 using ManuscriptApi.Presentation;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +21,8 @@ builder.Services.AddSwaggerGen
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddDbContext<ManuscriptDbContext>();
+builder.Services.AddDbContext<ManuscriptDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
 builder.Services.AddScoped<ICrudService<Country>, CountryService>();
