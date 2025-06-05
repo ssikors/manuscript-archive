@@ -1,4 +1,5 @@
 using ManuscriptApi.Business.Services;
+using ManuscriptApi.DataAccess.Data.Repositories;
 using ManuscriptApi.Presentation;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,11 +26,22 @@ builder.Services.AddDbContext<ManuscriptDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
+builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddScoped<ICrudService<Country>, CountryService>();
+
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ICrudService<Location>, LocationService>();
+
+builder.Services.AddScoped<ITagRepository, TagRepository>();
 builder.Services.AddScoped<ICrudService<Tag>, TagService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICrudService<User>, UserService>();
+
+builder.Services.AddScoped<IImageRepository, ImageRepository>();    
 builder.Services.AddScoped<ICrudService<Image>, ImageService>();
+
+builder.Services.AddScoped<IManuscriptRepository, ManuscriptRepository>();
 builder.Services.AddScoped<ICrudService<Manuscript>, ManuscriptService>();
 
 var app = builder.Build();

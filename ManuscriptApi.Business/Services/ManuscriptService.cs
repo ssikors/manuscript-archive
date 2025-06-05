@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ManuscriptApi.Business.DTOs;
+using ManuscriptApi.DataAccess.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManuscriptApi.Business.Services
 {
-    public class ManuscriptService : BaseDbCrudService<Manuscript, ManuscriptDbContext>
+    public class ManuscriptService : DapperCrudService<Manuscript>
     {
-        public ManuscriptService(ManuscriptDbContext context) : base(context)
+        public ManuscriptService(IManuscriptRepository repository) : base(repository)
         {
         }
     }

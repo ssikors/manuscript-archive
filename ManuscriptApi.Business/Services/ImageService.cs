@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ManuscriptApi.Business.DTOs;
+using ManuscriptApi.DataAccess.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManuscriptApi.Business.Services
 {
-    public class ImageService : BaseDbCrudService<Image, ManuscriptDbContext>
+    public class ImageService : DapperCrudService<Image>
     {
-        public ImageService(ManuscriptDbContext context) : base(context)
+        public ImageService(IImageRepository repository) : base(repository)
         {
         }
     }

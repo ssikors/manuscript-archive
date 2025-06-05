@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ManuscriptApi.Business.DTOs;
+using ManuscriptApi.DataAccess.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManuscriptApi.Business.Services
 {
-    public class LocationService : BaseDbCrudService<Location, ManuscriptDbContext>
+    public class LocationService : DapperCrudService<Location>
     {
-        public LocationService(ManuscriptDbContext context) : base(context)
+        public LocationService(ILocationRepository repository) : base(repository)
         {
         }
     }

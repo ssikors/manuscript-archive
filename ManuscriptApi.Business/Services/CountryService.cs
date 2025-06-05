@@ -1,12 +1,11 @@
 ﻿
-using ManuscriptApi.Business.DTOs;
-using Microsoft.EntityFrameworkCore;
+using ManuscriptApi.DataAccess.Data.Repositories;
 
 namespace ManuscriptApi.Business.Services
 {
-    public class CountryService : BaseDbCrudService<Country, ManuscriptDbContext>
+    public class CountryService : DapperCrudService<Country>
     {
-        public CountryService(ManuscriptDbContext context) : base(context)
+        public CountryService(ICountryRepository repository) : base(repository)
         {
         }
     }
