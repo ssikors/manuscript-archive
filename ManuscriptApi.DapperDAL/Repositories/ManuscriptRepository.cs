@@ -37,13 +37,16 @@ namespace ManuscriptApi.DapperDAL
 
             if (model.Tags?.Any() == true)
             {
-                foreach (var tag in model.Tags)
+                var tagParams = model.Tags.Select(tag => new
                 {
-                    await _connection.ExecuteAsync(
-                        "INSERT INTO ManuscriptTag (ManuscriptId, TagId) VALUES (@ManuscriptId, @TagId);",
-                        new { ManuscriptId = newId, TagId = tag.Id }
-                    );
-                }
+                    ManuscriptId = newId,
+                    TagId = tag.Id
+                });
+
+                await _connection.ExecuteAsync(
+                    "INSERT INTO ManuscriptTag (ManuscriptId, TagId) VALUES (@ManuscriptId, @TagId);",
+                    tagParams
+                );
             }
 
             return model;
@@ -184,14 +187,18 @@ namespace ManuscriptApi.DapperDAL
 
             if (model.Tags?.Any() == true)
             {
-                foreach (var tag in model.Tags)
+                var tagParams = model.Tags.Select(tag => new
                 {
-                    await _connection.ExecuteAsync(
-                        "INSERT INTO ManuscriptTag (ManuscriptId, TagId) VALUES (@ManuscriptId, @TagId);",
-                        new { ManuscriptId = id, TagId = tag.Id }
-                    );
-                }
+                    ManuscriptId = id,
+                    TagId = tag.Id
+                });
+
+                await _connection.ExecuteAsync(
+                    "INSERT INTO ManuscriptTag (ManuscriptId, TagId) VALUES (@ManuscriptId, @TagId);",
+                    tagParams
+                );
             }
+
 
             model.Id = id;
             return model;

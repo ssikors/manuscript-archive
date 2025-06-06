@@ -22,23 +22,27 @@ namespace ManuscriptApi.DapperDAL
         public async Task<Image> CreateAsync(Image model)
         {
             var sql = @"
-        INSERT INTO Images (Title, Url, ManuscriptId, IsDeleted)
-        VALUES (@Title, @Url, @ManuscriptId, @IsDeleted);
-        SELECT CAST(SCOPE_IDENTITY() as int);";
+            INSERT INTO Images (Title, Url, ManuscriptId, IsDeleted)
+            VALUES (@Title, @Url, @ManuscriptId, @IsDeleted);
+            SELECT CAST(SCOPE_IDENTITY() as int);";
 
             var newId = await _connection.ExecuteScalarAsync<int>(sql, model);
             model.Id = newId;
 
             if (model.Tags?.Any() == true)
             {
-                foreach (var tag in model.Tags)
+                var tagParams = model.Tags.Select(tag => new
                 {
-                    await _connection.ExecuteAsync(
-                        "INSERT INTO ImageTag (ImageId, TagId) VALUES (@ImageId, @TagId);",
-                        new { ImageId = newId, TagId = tag.Id }
-                    );
-                }
+                    ImageId = newId,
+                    TagId = tag.Id
+                });
+
+                await _connection.ExecuteAsync(
+                    "INSERT INTO ImageTag (ImageId, TagId) VALUES (@ImageId, @TagId);",
+                    tagParams
+                );
             }
+
 
             return model;
         }
@@ -146,13 +150,16 @@ namespace ManuscriptApi.DapperDAL
 
             if (model.Tags?.Any() == true)
             {
-                foreach (var tag in model.Tags)
+                var tagParams = model.Tags.Select(tag => new
                 {
-                    await _connection.ExecuteAsync(
-                        "INSERT INTO ImageTag (ImageId, TagId) VALUES (@ImageId, @TagId);",
-                        new { ImageId = id, TagId = tag.Id }
-                    );
-                }
+                    ImageId = id,
+                    TagId = tag.Id
+                });
+
+                await _connection.ExecuteAsync(
+                    "INSERT INTO ImageTag (ImageId, TagId) VALUES (@ImageId, @TagId);",
+                    tagParams
+                );
             }
 
             model.Id = id;
