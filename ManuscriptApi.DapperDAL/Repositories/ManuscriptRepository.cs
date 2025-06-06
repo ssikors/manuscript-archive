@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,36 +12,34 @@ namespace ManuscriptApi.DapperDAL
 {
     public class ManuscriptRepository : IManuscriptRepository
     {
-        private readonly IConfiguration _configuration;
+        private readonly IDbConnection _connection;
 
-        public ManuscriptRepository(IConfiguration configuration)
+        public ManuscriptRepository(IDbConnection connection)
         {
-            _configuration = configuration;
+            _connection = connection;
         }
 
         public async Task<Manuscript> CreateAsync(Manuscript model)
         {
-            using var connection = GetConnection();
-
             var sql = @"
-            INSERT INTO Manuscripts (
-                Title, Description, YearWrittenStart, YearWrittenEnd, 
-                SourceUrl, CreatedAt, LocationId, AuthorId, IsDeleted
-            )
-            VALUES (
-                @Title, @Description, @YearWrittenStart, @YearWrittenEnd,
-                @SourceUrl, @CreatedAt, @LocationId, @AuthorId, @IsDeleted
-            );
-            SELECT CAST(SCOPE_IDENTITY() as int);";
+        INSERT INTO Manuscripts (
+            Title, Description, YearWrittenStart, YearWrittenEnd, 
+            SourceUrl, CreatedAt, LocationId, AuthorId, IsDeleted
+        )
+        VALUES (
+            @Title, @Description, @YearWrittenStart, @YearWrittenEnd,
+            @SourceUrl, @CreatedAt, @LocationId, @AuthorId, @IsDeleted
+        );
+        SELECT CAST(SCOPE_IDENTITY() as int);";
 
-            var newId = await connection.ExecuteScalarAsync<int>(sql, model);
+            var newId = await _connection.ExecuteScalarAsync<int>(sql, model);
             model.Id = newId;
 
             if (model.Tags?.Any() == true)
             {
                 foreach (var tag in model.Tags)
                 {
-                    await connection.ExecuteAsync(
+                    await _connection.ExecuteAsync(
                         "INSERT INTO ManuscriptTag (ManuscriptId, TagId) VALUES (@ManuscriptId, @TagId);",
                         new { ManuscriptId = newId, TagId = tag.Id }
                     );
@@ -52,35 +51,31 @@ namespace ManuscriptApi.DapperDAL
 
         public async Task<bool> DeleteAsync(int id)
         {
-            using var connection = GetConnection();
-
             var sql = "DELETE FROM Manuscripts WHERE Id = @Id";
-            var rowsAffected = await connection.ExecuteAsync(sql, new { Id = id });
+            var rowsAffected = await _connection.ExecuteAsync(sql, new { Id = id });
 
             return rowsAffected > 0;
         }
 
         public async Task<List<Manuscript>> GetAllAsync()
         {
-            using var connection = GetConnection();
-
             var sql = @"
-            SELECT m.*, 
-                   u.Id, u.Username, u.Email, u.IsModerator, u.IsDeleted,
-                   l.Id, l.Name, l.CountryId,
-                   t.Id, t.Name, t.Description, t.IsDeleted,
-                   i.Id, i.Title, i.Url, i.ManuscriptId, i.IsDeleted
-            FROM Manuscripts m
-            INNER JOIN Users u ON m.AuthorId = u.Id
-            INNER JOIN Locations l ON m.LocationId = l.Id
-            LEFT JOIN ManuscriptTag mt ON m.Id = mt.ManuscriptId
-            LEFT JOIN Tags t ON mt.TagId = t.Id
-            LEFT JOIN Images i ON i.ManuscriptId = m.Id
-            WHERE m.IsDeleted IS NULL OR m.IsDeleted = 0";
+        SELECT m.*, 
+               u.Id, u.Username, u.Email, u.IsModerator, u.IsDeleted,
+               l.Id, l.Name, l.CountryId,
+               t.Id, t.Name, t.Description, t.IsDeleted,
+               i.Id, i.Title, i.Url, i.ManuscriptId, i.IsDeleted
+        FROM Manuscripts m
+        INNER JOIN Users u ON m.AuthorId = u.Id
+        INNER JOIN Locations l ON m.LocationId = l.Id
+        LEFT JOIN ManuscriptTag mt ON m.Id = mt.ManuscriptId
+        LEFT JOIN Tags t ON mt.TagId = t.Id
+        LEFT JOIN Images i ON i.ManuscriptId = m.Id
+        WHERE m.IsDeleted IS NULL OR m.IsDeleted = 0";
 
             var manuscriptDict = new Dictionary<int, Manuscript>();
 
-            var manuscripts = await connection.QueryAsync<
+            var manuscripts = await _connection.QueryAsync<
                 Manuscript, User, Location, Tag, Image, Manuscript>(
                 sql,
                 (manuscript, user, location, tag, image) =>
@@ -110,25 +105,23 @@ namespace ManuscriptApi.DapperDAL
 
         public async Task<Manuscript?> GetByIdAsync(int id)
         {
-            using var connection = GetConnection();
-
             var sql = @"
-            SELECT m.*, 
-                   u.Id, u.Username, u.Email, u.IsModerator, u.IsDeleted,
-                   l.Id, l.Name, l.CountryId,
-                   t.Id, t.Name, t.Description, t.IsDeleted,
-                   i.Id, i.Title, i.Url, i.ManuscriptId, i.IsDeleted
-            FROM Manuscripts m
-            INNER JOIN Users u ON m.AuthorId = u.Id
-            INNER JOIN Locations l ON m.LocationId = l.Id
-            LEFT JOIN ManuscriptTag mt ON m.Id = mt.ManuscriptId
-            LEFT JOIN Tags t ON mt.TagId = t.Id
-            LEFT JOIN Images i ON i.ManuscriptId = m.Id
-            WHERE m.Id = @Id AND (m.IsDeleted IS NULL OR m.IsDeleted = 0)";
+        SELECT m.*, 
+               u.Id, u.Username, u.Email, u.IsModerator, u.IsDeleted,
+               l.Id, l.Name, l.CountryId,
+               t.Id, t.Name, t.Description, t.IsDeleted,
+               i.Id, i.Title, i.Url, i.ManuscriptId, i.IsDeleted
+        FROM Manuscripts m
+        INNER JOIN Users u ON m.AuthorId = u.Id
+        INNER JOIN Locations l ON m.LocationId = l.Id
+        LEFT JOIN ManuscriptTag mt ON m.Id = mt.ManuscriptId
+        LEFT JOIN Tags t ON mt.TagId = t.Id
+        LEFT JOIN Images i ON i.ManuscriptId = m.Id
+        WHERE m.Id = @Id AND (m.IsDeleted IS NULL OR m.IsDeleted = 0)";
 
             var manuscriptDict = new Dictionary<int, Manuscript>();
 
-            var manuscripts = await connection.QueryAsync<
+            var manuscripts = await _connection.QueryAsync<
                 Manuscript, User, Location, Tag, Image, Manuscript>(
                 sql,
                 (manuscript, user, location, tag, image) =>
@@ -159,22 +152,20 @@ namespace ManuscriptApi.DapperDAL
 
         public async Task<Manuscript?> UpdateAsync(Manuscript model, int id)
         {
-            using var connection = GetConnection();
-
             var sql = @"
-            UPDATE Manuscripts
-            SET Title = @Title,
-                Description = @Description,
-                YearWrittenStart = @YearWrittenStart,
-                YearWrittenEnd = @YearWrittenEnd,
-                SourceUrl = @SourceUrl,
-                CreatedAt = @CreatedAt,
-                LocationId = @LocationId,
-                AuthorId = @AuthorId,
-                IsDeleted = @IsDeleted
-            WHERE Id = @Id";
+        UPDATE Manuscripts
+        SET Title = @Title,
+            Description = @Description,
+            YearWrittenStart = @YearWrittenStart,
+            YearWrittenEnd = @YearWrittenEnd,
+            SourceUrl = @SourceUrl,
+            CreatedAt = @CreatedAt,
+            LocationId = @LocationId,
+            AuthorId = @AuthorId,
+            IsDeleted = @IsDeleted
+        WHERE Id = @Id";
 
-            var rowsAffected = await connection.ExecuteAsync(sql, new
+            var rowsAffected = await _connection.ExecuteAsync(sql, new
             {
                 model.Title,
                 model.Description,
@@ -195,7 +186,7 @@ namespace ManuscriptApi.DapperDAL
             {
                 foreach (var tag in model.Tags)
                 {
-                    await connection.ExecuteAsync(
+                    await _connection.ExecuteAsync(
                         "INSERT INTO ManuscriptTag (ManuscriptId, TagId) VALUES (@ManuscriptId, @TagId);",
                         new { ManuscriptId = id, TagId = tag.Id }
                     );
@@ -205,9 +196,6 @@ namespace ManuscriptApi.DapperDAL
             model.Id = id;
             return model;
         }
-
-        private SqlConnection GetConnection()
-            => new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
     }
 
 }

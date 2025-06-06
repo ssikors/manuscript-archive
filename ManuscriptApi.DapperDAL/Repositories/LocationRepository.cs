@@ -1,4 +1,5 @@
 ﻿
+using System.Data;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -7,51 +8,43 @@ namespace ManuscriptApi.DapperDAL
 {
     public class LocationRepository : ILocationRepository
     {
-        private readonly IConfiguration _configuration;
+        private readonly IDbConnection _connection;
 
-        public LocationRepository(IConfiguration configuration)
+        public LocationRepository(IDbConnection connection)
         {
-            _configuration = configuration;
+            _connection = connection;
         }
 
         public async Task<Location> CreateAsync(Location model)
         {
-            using (var connection = GetConnection())
-            {
-                var sql = @"
-                INSERT INTO Locations (Name, CountryId) 
-                VALUES (@Name, @CountryId); 
-                SELECT CAST(SCOPE_IDENTITY() as int);";
+            var sql = @"
+        INSERT INTO Locations (Name, CountryId) 
+        VALUES (@Name, @CountryId); 
+        SELECT CAST(SCOPE_IDENTITY() as int);";
 
-                var newId = await connection.ExecuteScalarAsync<int>(sql, model);
-                model.Id = newId;
+            var newId = await _connection.ExecuteScalarAsync<int>(sql, model);
+            model.Id = newId;
 
-                return await GetByIdAsync(newId) ?? model;
-            }
+            return await GetByIdAsync(newId) ?? model;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            using (var connection = GetConnection())
-            {
-                var sql = "DELETE FROM Locations WHERE Id = @Id";
-                var rowsAffected = await connection.ExecuteAsync(sql, new { Id = id });
-                return rowsAffected > 0;
-            }
+            var sql = "DELETE FROM Locations WHERE Id = @Id";
+            var rowsAffected = await _connection.ExecuteAsync(sql, new { Id = id });
+            return rowsAffected > 0;
         }
 
         public async Task<List<Location>> GetAllAsync()
         {
-            using var connection = GetConnection();
-
             var sql = @"
-            SELECT l.*, c.Id, c.Name, c.Description, c.IconUrl 
-            FROM Locations l
-            INNER JOIN Countries c ON l.CountryId = c.Id";
+        SELECT l.*, c.Id, c.Name, c.Description, c.IconUrl 
+        FROM Locations l
+        INNER JOIN Countries c ON l.CountryId = c.Id";
 
             var locationDict = new Dictionary<int, Location>();
 
-            var locations = await connection.QueryAsync<Location, Country, Location>(
+            var locations = await _connection.QueryAsync<Location, Country, Location>(
                 sql,
                 (location, country) =>
                 {
@@ -70,15 +63,13 @@ namespace ManuscriptApi.DapperDAL
 
         public async Task<Location?> GetByIdAsync(int id)
         {
-            using var connection = GetConnection();
-
             var sql = @"
-            SELECT l.*, c.Id, c.Name, c.Description, c.IconUrl
-            FROM Locations l
-            INNER JOIN Countries c ON l.CountryId = c.Id
-            WHERE l.Id = @Id";
+        SELECT l.*, c.Id, c.Name, c.Description, c.IconUrl
+        FROM Locations l
+        INNER JOIN Countries c ON l.CountryId = c.Id
+        WHERE l.Id = @Id";
 
-            var location = await connection.QueryAsync<Location, Country, Location>(
+            var location = await _connection.QueryAsync<Location, Country, Location>(
                 sql,
                 (loc, country) =>
                 {
@@ -91,34 +82,26 @@ namespace ManuscriptApi.DapperDAL
             return location.FirstOrDefault();
         }
 
-
         public async Task<Location?> UpdateAsync(Location model, int id)
         {
-            using (var connection = GetConnection())
+            var sql = @"
+        UPDATE Locations 
+        SET Name = @Name, 
+            CountryId = @CountryId
+        WHERE Id = @Id";
+
+            var rowsAffected = await _connection.ExecuteAsync(sql, new
             {
-                var sql = @"
-                UPDATE Locations 
-                SET Name = @Name, 
-                    CountryId = @CountryId
-                WHERE Id = @Id";
+                model.Name,
+                model.CountryId,
+                Id = id
+            });
 
-                var rowsAffected = await connection.ExecuteAsync(sql, new
-                {
-                    model.Name,
-                    model.CountryId,
-                    Id = id
-                });
+            if (rowsAffected == 0)
+                return null;
 
-                if (rowsAffected == 0)
-                    return null;
-
-                return await GetByIdAsync(id);
-            }
-        }
-
-        private SqlConnection GetConnection()
-        {
-            return new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
+            return await GetByIdAsync(id);
         }
     }
+
 }

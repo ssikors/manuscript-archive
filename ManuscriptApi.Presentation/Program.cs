@@ -1,7 +1,10 @@
+using System.Data;
 using ManuscriptApi.Business.Services;
 using ManuscriptApi.DapperDAL;
 using ManuscriptApi.Presentation;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +28,10 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 // builder.Services.AddDbContext<ManuscriptDbContext>(options =>
 //    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+// Connection for repositories
+builder.Services.AddScoped<IDbConnection>(sp =>
+    new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 builder.Services.AddScoped<ICrudService<Country>, CountryService>();
