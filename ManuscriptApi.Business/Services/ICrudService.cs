@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ManuscriptApi.DataAccess.Models;
-
+﻿
 namespace ManuscriptApi.Business.Services
 {
     public interface IService<T> : IService where T : IModel

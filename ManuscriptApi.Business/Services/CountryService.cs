@@ -1,5 +1,5 @@
 ﻿
-using ManuscriptApi.DataAccess.Data.Repositories;
+using ManuscriptApi.DapperDAL;
 
 namespace ManuscriptApi.Business.Services
 {

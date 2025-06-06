@@ -1,5 +1,5 @@
 using ManuscriptApi.Business.Services;
-using ManuscriptApi.DataAccess.Data.Repositories;
+using ManuscriptApi.DapperDAL;
 using ManuscriptApi.Presentation;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,8 +22,8 @@ builder.Services.AddSwaggerGen
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddDbContext<ManuscriptDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// builder.Services.AddDbContext<ManuscriptDbContext>(options =>
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
 builder.Services.AddScoped<ICountryRepository, CountryRepository>();

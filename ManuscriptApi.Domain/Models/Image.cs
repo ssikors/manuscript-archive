@@ -1,4 +1,7 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using ManuscriptApi.DataAccess.Models;
+
 public class Image : IModel
 {
     public int Id { get; set; }

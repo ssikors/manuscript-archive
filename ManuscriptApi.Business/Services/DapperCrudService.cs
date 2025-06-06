@@ -1,7 +1,5 @@
 ﻿
-using ManuscriptApi.DataAccess.Data.Repositories;
-using ManuscriptApi.DataAccess.Models;
-using Microsoft.EntityFrameworkCore;
+using ManuscriptApi.DapperDAL;
 
 namespace ManuscriptApi.Business.Services
 {
