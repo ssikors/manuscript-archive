@@ -29,7 +29,7 @@ namespace ManuscriptApi.DapperDAL
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var sql = "DELETE FROM Tags WHERE Id = @Id";
+            var sql = "UPDATE Tags SET IsDeleted = 1 WHERE Id = @Id";
 
             var rowsAffected = await _connection.ExecuteAsync(sql, new { Id = id });
 
