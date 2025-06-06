@@ -1,10 +1,8 @@
 using System.Data;
 using ManuscriptApi.Business.Services;
 using ManuscriptApi.DapperDAL;
-using ManuscriptApi.Presentation;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,7 +43,7 @@ builder.Services.AddScoped<ICrudService<Tag>, TagService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICrudService<User>, UserService>();
 
-builder.Services.AddScoped<IImageRepository, ImageRepository>();    
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddScoped<ICrudService<Image>, ImageService>();
 
 builder.Services.AddScoped<IManuscriptRepository, ManuscriptRepository>();

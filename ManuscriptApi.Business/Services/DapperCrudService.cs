@@ -40,7 +40,7 @@ namespace ManuscriptApi.Business.Services
         public async Task<T?> UpdateAsync(T model, int id)
         {
             T? updated = await _repository.UpdateAsync(model, id);
-            
+
             return updated;
         }
     }

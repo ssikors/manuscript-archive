@@ -1,7 +1,5 @@
-﻿
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
 
 namespace ManuscriptApi.EFCoreDAL.Configuration
 {
@@ -9,7 +7,7 @@ namespace ManuscriptApi.EFCoreDAL.Configuration
     {
         public void Configure(EntityTypeBuilder<Location> builder)
         {
-            builder .HasKey(e => e.Id).HasName("PK__Location__3214EC0791E58024");
+            builder.HasKey(e => e.Id).HasName("PK__Location__3214EC0791E58024");
 
             builder.HasIndex(e => e.CountryId).HasDatabaseName("IX_Locations_Country");
             builder.HasIndex(e => e.Name).HasDatabaseName("IX_Locations_Name");

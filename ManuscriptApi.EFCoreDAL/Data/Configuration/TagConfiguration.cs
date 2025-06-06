@@ -1,6 +1,6 @@
 ﻿
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ManuscriptApi.EFCoreDAL.Configuration
 {
@@ -12,7 +12,7 @@ namespace ManuscriptApi.EFCoreDAL.Configuration
 
             builder.HasIndex(e => e.Name).HasDatabaseName("IX_Tags_Name");
 
-            builder .Property(e => e.Id).ValueGeneratedNever();
+            builder.Property(e => e.Id).ValueGeneratedNever();
             builder.Property(e => e.Description).HasColumnType("text");
             builder.Property(e => e.IsDeleted).HasDefaultValue(false);
             builder.Property(e => e.Name).HasMaxLength(255);

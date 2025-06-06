@@ -1,9 +1,6 @@
-﻿
-using System.Xml.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManuscriptApi.Controllers

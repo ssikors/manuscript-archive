@@ -1,8 +1,6 @@
-﻿
-using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Configuration;
+﻿using System.Data;
 using Dapper;
-using System.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace ManuscriptApi.DapperDAL
 {
@@ -45,7 +43,7 @@ namespace ManuscriptApi.DapperDAL
         }
 
         public async Task<Country?> GetByIdAsync(int id)
-        { 
+        {
             var country = await _connection.QueryFirstAsync<Country>("SELECT * FROM Countries WHERE ID = @Id", new { Id = id });
             return country;
         }

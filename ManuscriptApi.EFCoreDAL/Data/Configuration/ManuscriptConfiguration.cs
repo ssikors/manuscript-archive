@@ -1,6 +1,6 @@
 ﻿
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ManuscriptApi.EFCoreDAL.Configuration
 {

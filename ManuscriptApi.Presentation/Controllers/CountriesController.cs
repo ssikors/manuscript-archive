@@ -1,6 +1,4 @@
-﻿
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -41,7 +39,7 @@ namespace ManuscriptApi.Controllers
         {
             Country? country = await _countryService.CreateAsync(_mapper.Map<Country>(countryDto));
 
-            return CreatedAtAction(nameof(AddCountry), new {id = country.Id}, country);
+            return CreatedAtAction(nameof(AddCountry), new { id = country.Id }, country);
         }
 
         /// <summary>
@@ -74,7 +72,7 @@ namespace ManuscriptApi.Controllers
             {
                 return BadRequest("Could not update the country");
             }
-            
+
             return NoContent();
         }
 

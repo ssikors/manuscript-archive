@@ -2,7 +2,7 @@
 using ManuscriptApi.EFCoreDAL.Configuration;
 using Microsoft.EntityFrameworkCore;
 
-public  class ManuscriptDbContext : DbContext
+public class ManuscriptDbContext : DbContext
 {
     public ManuscriptDbContext()
     {
