@@ -16,9 +16,9 @@ namespace ManuscriptApi.DapperDAL
         public async Task<User> CreateAsync(User model)
         {
             var sql = @"
-        INSERT INTO Users (Username, Email, IsModerator, IsDeleted)
-        VALUES (@Username, @Email, @IsModerator, @IsDeleted);
-        SELECT CAST(SCOPE_IDENTITY() as int);";
+            INSERT INTO Users (Username, Email, IsModerator, IsDeleted)
+            VALUES (@Username, @Email, @IsModerator, @IsDeleted);
+            SELECT CAST(SCOPE_IDENTITY() as int);";
 
             var newId = await _connection.ExecuteScalarAsync<int>(sql, model);
 
@@ -53,15 +53,24 @@ namespace ManuscriptApi.DapperDAL
             return user;
         }
 
+        public async Task<User?> GetUserByEmailAsync(string email)
+        {
+            var sql = "SELECT * FROM Users WHERE Email = @Email AND (IsDeleted IS NULL OR IsDeleted = 0)";
+
+            var user = await _connection.QueryFirstOrDefaultAsync<User>(sql, new { Email = email });
+
+            return user;
+        }
+
         public async Task<User?> UpdateAsync(User model, int id)
         {
             var sql = @"
-        UPDATE Users
-        SET Username = @Username,
+            UPDATE Users
+            SET Username = @Username,
             Email = @Email,
             IsModerator = @IsModerator,
             IsDeleted = @IsDeleted
-        WHERE Id = @Id";
+            WHERE Id = @Id";
 
             var rowsAffected = await _connection.ExecuteAsync(sql, new
             {

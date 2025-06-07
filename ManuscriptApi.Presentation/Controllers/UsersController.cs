@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManuscriptApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize (Roles=UserRoles.Moderator)]
     public class UsersController : ControllerBase
     {
         private readonly ICrudService<User> _userService;
