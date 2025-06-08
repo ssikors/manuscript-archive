@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ManuscriptApi.Business.DTOs;
-using ManuscriptApi.Business.Queries;
+using ManuscriptApi.Business.MediatR.Queries;
 using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

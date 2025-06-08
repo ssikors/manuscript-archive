@@ -1,7 +1,6 @@
-﻿
-using ManuscriptApi.Business.Commands;
-using ManuscriptApi.Business.DTOs;
-using ManuscriptApi.Business.Queries;
+﻿using ManuscriptApi.Business.DTOs;
+using ManuscriptApi.Business.MediatR.Commands;
+using ManuscriptApi.Business.MediatR.Queries;
 using ManuscriptApi.Business.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

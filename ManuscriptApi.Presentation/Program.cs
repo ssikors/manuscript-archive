@@ -1,10 +1,13 @@
 using System.Data;
 using System.Text;
-using ManuscriptApi.Business.Commands;
-using ManuscriptApi.Business.Queries;
+using FluentValidation;
+using ManuscriptApi.Business.MediatR;
+using ManuscriptApi.Business.MediatR.Commands;
+using ManuscriptApi.Business.MediatR.Queries;
 using ManuscriptApi.Business.Services;
 using ManuscriptApi.DapperDAL;
 using ManuscriptApi.DapperDAL.Repositories;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -52,6 +55,10 @@ builder.Services.AddMediatR(configuration =>
 {
     configuration.RegisterServicesFromAssembly(typeof(RegisterUserCommand).Assembly); // loads services from the right project
 });
+
+builder.Services.AddValidatorsFromAssemblyContaining<RegisterUserCommandValidator>();
+
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 

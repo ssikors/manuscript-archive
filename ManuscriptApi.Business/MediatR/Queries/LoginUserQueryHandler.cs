@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace ManuscriptApi.Business.Queries
+namespace ManuscriptApi.Business.MediatR.Queries
 {
     public class JwtSettings
     {

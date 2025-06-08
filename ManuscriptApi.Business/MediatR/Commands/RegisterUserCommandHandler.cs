@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using ManuscriptApi.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace ManuscriptApi.Business.Commands
+namespace ManuscriptApi.Business.MediatR.Commands
 {
     class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommand, int>
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MediatR;
 
-namespace ManuscriptApi.Business.Queries
+namespace ManuscriptApi.Business.MediatR.Queries
 {
     public record LoginUserQuery(string Email, string Password) : IRequest<string?>
     {
