@@ -1,17 +1,20 @@
-﻿
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using ManuscriptApi.Business.DTOs;
-using ManuscriptApi.DapperDAL;
+using System.Threading.Tasks;
 using ManuscriptApi.DapperDAL.Repositories;
+using ManuscriptApi.DapperDAL;
+using MediatR;
+using ManuscriptApi.Business.Services;
+using Microsoft.Extensions.Options;
 using ManuscriptApi.Domain.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
-namespace ManuscriptApi.Business.Services
+namespace ManuscriptApi.Business.Queries
 {
     public class JwtSettings
     {
@@ -26,7 +29,7 @@ namespace ManuscriptApi.Business.Services
         public const string Moderator = "Moderator";
     }
 
-    public class AuthService : IAuthService
+    public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, string?>
     {
         private readonly string _token;
         private readonly string _issuer;
@@ -35,7 +38,7 @@ namespace ManuscriptApi.Business.Services
         private readonly IUserRepository _userRepository;
         private readonly IUserAuthRepository _userAuthRepository;
 
-        public AuthService(IOptions<JwtSettings> jwtOptions, IUserRepository userRepository, IUserAuthRepository userAuthRepository)
+        public LoginUserQueryHandler(IOptions<JwtSettings> jwtOptions, IUserRepository userRepository, IUserAuthRepository userAuthRepository)
         {
             var jwtSettings = jwtOptions.Value;
 
@@ -47,33 +50,9 @@ namespace ManuscriptApi.Business.Services
             _userAuthRepository = userAuthRepository;
         }
 
-        public async Task<int?> RegisterAsync(UserRegisterDto dto)
+        public async Task<string?> Handle(LoginUserQuery query, CancellationToken cancellationToken)
         {
-            if (await _userRepository.GetUserByEmailAsync(dto.Email) != null)
-            {
-                return null;
-            }
-
-            User? user = await _userRepository.CreateAsync(new User
-            {
-                Username = dto.Username,
-                Email = dto.Email,
-            });
-
-            var userAuth = new UserAuth();
-            var passwordHash = new PasswordHasher<UserAuth>().HashPassword(userAuth, dto.Password);
-
-            userAuth.PasswordHash = passwordHash;
-            userAuth.UserId = user.Id;
-
-            var authId = await _userAuthRepository.InsertUserAuth(userAuth);
-
-            return authId;
-        }
-
-        public async Task<string?> LoginAsync(UserLoginDto dto)
-        {
-            var user = await _userRepository.GetUserByEmailAsync(dto.Email);
+            var user = await _userRepository.GetUserByEmailAsync(query.Email);
 
             if (user == null)
             {
@@ -87,7 +66,7 @@ namespace ManuscriptApi.Business.Services
                 return null;
             }
 
-            if (new PasswordHasher<UserAuth>().VerifyHashedPassword(userAuth, userAuth.PasswordHash, dto.Password) == PasswordVerificationResult.Failed)
+            if (new PasswordHasher<UserAuth>().VerifyHashedPassword(userAuth, userAuth.PasswordHash, query.Password) == PasswordVerificationResult.Failed)
             {
                 return null;
             }

@@ -1,5 +1,7 @@
 using System.Data;
 using System.Text;
+using ManuscriptApi.Business.Commands;
+using ManuscriptApi.Business.Queries;
 using ManuscriptApi.Business.Services;
 using ManuscriptApi.DapperDAL;
 using ManuscriptApi.DapperDAL.Repositories;
@@ -45,6 +47,11 @@ builder.Services.AddSwaggerGen
     });
     }
 );
+
+builder.Services.AddMediatR(configuration =>
+{
+    configuration.RegisterServicesFromAssembly(typeof(RegisterUserCommand).Assembly); // loads services from the right project
+});
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
@@ -117,8 +124,7 @@ builder.Services.AddScoped<ICrudService<Image>, ImageService>();
 builder.Services.AddScoped<IManuscriptRepository, ManuscriptRepository>();
 builder.Services.AddScoped<ICrudService<Manuscript>, ManuscriptService>();
 
-builder.Services.AddScoped<IUserAuthRepository,  UserAuthRepository>();
-builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserAuthRepository, UserAuthRepository>();
 
 var app = builder.Build();
 

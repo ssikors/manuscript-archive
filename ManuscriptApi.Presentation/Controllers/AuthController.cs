@@ -1,6 +1,9 @@
 ﻿
+using ManuscriptApi.Business.Commands;
 using ManuscriptApi.Business.DTOs;
+using ManuscriptApi.Business.Queries;
 using ManuscriptApi.Business.Services;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ManuscriptApi.Presentation.Controllers
@@ -9,12 +12,11 @@ namespace ManuscriptApi.Presentation.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
+        private readonly ISender _sender;
 
-        private readonly IAuthService _authService;
-
-        public AuthController(IAuthService authService)
+        public AuthController(ISender sender)
         {
-            _authService = authService;
+            _sender = sender;
         }
 
         /// <summary>
@@ -22,11 +24,11 @@ namespace ManuscriptApi.Presentation.Controllers
         /// </summary>
         /// <returns>Status 200 on successful registration</returns>
         [HttpPost("register")]
-        public async Task<ActionResult> Register(UserRegisterDto request)
+        public async Task<ActionResult> Register(RegisterUserCommand command)
         {
-            var id = await _authService.RegisterAsync(request);
+            var id = await _sender.Send(command);
 
-            if (id == null)
+            if (id == 0)
             {
                 return BadRequest("Failed to register");
             }
@@ -39,9 +41,10 @@ namespace ManuscriptApi.Presentation.Controllers
         /// </summary>
         /// <returns>A jwt token</returns>
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserLoginDto req)
+        public async Task<ActionResult<string>> Login(LoginUserQuery query)
         {
-            var token = await _authService.LoginAsync(req);
+            var token = await _sender.Send(query);
+
             if (token == null)
             {
                 return BadRequest("Invalid username or password");
