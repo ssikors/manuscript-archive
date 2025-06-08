@@ -51,6 +51,14 @@ builder.Services.AddSwaggerGen
     }
 );
 
+builder.Services.AddHealthChecks()
+    .AddSqlServer(
+        connectionString: builder.Configuration.GetConnectionString("DefaultConnection")!,
+        name: "sql",
+        failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy,
+        tags: new[] { "db", "sql" }
+    );
+
 builder.Services.AddMediatR(configuration =>
 {
     configuration.RegisterServicesFromAssembly(typeof(RegisterUserCommand).Assembly); // loads services from the right project
@@ -148,5 +156,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();
