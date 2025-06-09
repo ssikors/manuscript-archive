@@ -22,17 +22,17 @@ namespace ManuscriptApi.Presentation.Controllers
         /// Endpoint for registering an account
         /// </summary>
         /// <returns>Status 200 on successful registration</returns>
-        [HttpPost("register")]
+        [HttpPost("users")]
         public async Task<ActionResult> Register(RegisterUserCommand command)
         {
             var id = await _sender.Send(command);
 
             if (id == 0)
             {
-                return BadRequest("Failed to register");
+                return Unauthorized("Failed to register");
             }
 
-            return Ok();
+            return Ok(id);
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace ManuscriptApi.Presentation.Controllers
 
             if (token == null)
             {
-                return BadRequest("Invalid username or password");
+                return Unauthorized("Invalid username or password");
             }
 
             return Ok(token);
