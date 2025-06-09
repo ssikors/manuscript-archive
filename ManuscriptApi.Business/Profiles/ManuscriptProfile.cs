@@ -7,7 +7,10 @@ namespace ManuscriptApi.Business.Profiles
     {
         public ManuscriptProfile()
         {
-            CreateMap<Manuscript, ManuscriptDto>().ReverseMap();
+            CreateMap<Manuscript, ManuscriptDto>()
+                .ForMember(dest => dest.TagIds, opt => opt.MapFrom(src => src.Tags.Select(t => t.Id)))
+                .ReverseMap()
+                .ForMember(dest => dest.Tags, opt => opt.Ignore());
         }
     }
 }
