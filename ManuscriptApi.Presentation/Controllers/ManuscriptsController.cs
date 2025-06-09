@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -26,7 +27,9 @@ namespace ManuscriptApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Manuscript>>> GetAll()
         {
-            var manuscripts = await _manuscriptService.GetAllAsync();
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            var manuscripts = await _manuscriptService.GetAllAsync(email);
             return Ok(manuscripts);
         }
 
@@ -36,7 +39,9 @@ namespace ManuscriptApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Manuscript>> GetById(int id)
         {
-            var manuscript = await _manuscriptService.GetByIdAsync(id);
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            var manuscript = await _manuscriptService.GetByIdAsync(id, email);
             if (manuscript == null)
                 return NotFound();
 
@@ -49,8 +54,10 @@ namespace ManuscriptApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Manuscript>> Create(ManuscriptDto dto)
         {
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
             var manuscript = _mapper.Map<Manuscript>(dto);
-            var created = await _manuscriptService.CreateAsync(manuscript);
+            var created = await _manuscriptService.CreateAsync(manuscript, email);
 
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -61,8 +68,10 @@ namespace ManuscriptApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, ManuscriptDto dto)
         {
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
             var entity = _mapper.Map<Manuscript>(dto);
-            var updated = await _manuscriptService.UpdateAsync(entity, id);
+            var updated = await _manuscriptService.UpdateAsync(entity, id, email);
 
             if (updated == null)
                 return NotFound();
@@ -76,7 +85,9 @@ namespace ManuscriptApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deleted = await _manuscriptService.DeleteAsync(id);
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            var deleted = await _manuscriptService.DeleteAsync(id, email);
             if (!deleted)
                 return NotFound();
 

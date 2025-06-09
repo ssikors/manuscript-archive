@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -27,7 +28,9 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Location>>> GetLocations()
         {
-            var locations = await _locationService.GetAllAsync();
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            var locations = await _locationService.GetAllAsync(email);
             return Ok(locations);
         }
 
@@ -37,8 +40,10 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpPost]
         public async Task<ActionResult<Location>> AddLocation(LocationDto locationDto)
         {
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
             var location = _mapper.Map<Location>(locationDto);
-            var created = await _locationService.CreateAsync(location);
+            var created = await _locationService.CreateAsync(location, email);
 
             return CreatedAtAction(nameof(GetLocation), new { id = created.Id }, created);
         }
@@ -49,7 +54,9 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Location>> GetLocation(int id)
         {
-            var location = await _locationService.GetByIdAsync(id);
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            var location = await _locationService.GetByIdAsync(id, email);
 
             if (location == null)
             {
@@ -65,8 +72,10 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateLocation(int id, LocationDto updatedLocation)
         {
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
             var entity = _mapper.Map<Location>(updatedLocation);
-            var updated = await _locationService.UpdateAsync(entity, id);
+            var updated = await _locationService.UpdateAsync(entity, id, email);
 
             if (updated == null)
             {
@@ -82,7 +91,9 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteLocation(int id)
         {
-            var deleted = await _locationService.DeleteAsync(id);
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            var deleted = await _locationService.DeleteAsync(id, email);
 
             if (!deleted)
             {

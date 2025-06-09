@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -26,7 +27,9 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Image>>> GetImages()
         {
-            var images = await _imageService.GetAllAsync();
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            var images = await _imageService.GetAllAsync(email);
             return Ok(images);
         }
 
@@ -36,7 +39,9 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Image>> GetImage(int id)
         {
-            var image = await _imageService.GetByIdAsync(id);
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            var image = await _imageService.GetByIdAsync(id, email);
             if (image == null)
                 return NotFound();
 
@@ -49,8 +54,9 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpPost]
         public async Task<ActionResult<Image>> AddImage(ImageDto imageDto)
         {
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
             var image = _mapper.Map<Image>(imageDto);
-            var created = await _imageService.CreateAsync(image);
+            var created = await _imageService.CreateAsync(image, email);
 
             return CreatedAtAction(nameof(GetImage), new { id = created.Id }, created);
         }
@@ -61,8 +67,9 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateImage(int id, ImageDto imageDto)
         {
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
             var entity = _mapper.Map<Image>(imageDto);
-            var updated = await _imageService.UpdateAsync(entity, id);
+            var updated = await _imageService.UpdateAsync(entity, id, email);
 
             if (updated == null)
                 return BadRequest("Could not update image");
@@ -76,7 +83,8 @@ namespace ManuscriptApi.Presentation.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteImage(int id)
         {
-            var deleted = await _imageService.DeleteAsync(id);
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+            var deleted = await _imageService.DeleteAsync(id, email);
 
             if (!deleted)
                 return BadRequest("Could not delete image");

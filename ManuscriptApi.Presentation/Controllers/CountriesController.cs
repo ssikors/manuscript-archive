@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +29,9 @@ namespace ManuscriptApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
         {
-            var countries = await _countryService.GetAllAsync();
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            var countries = await _countryService.GetAllAsync(email);
 
             return Ok(countries);
         }
@@ -39,7 +42,9 @@ namespace ManuscriptApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Country>> AddCountry(CountryDto countryDto)
         {
-            Country? country = await _countryService.CreateAsync(_mapper.Map<Country>(countryDto));
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            Country? country = await _countryService.CreateAsync(_mapper.Map<Country>(countryDto), email);
 
             return CreatedAtAction(nameof(AddCountry), new { id = country.Id }, country);
         }
@@ -50,7 +55,9 @@ namespace ManuscriptApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Country>> GetCountry(int id)
         {
-            Country? country = await _countryService.GetByIdAsync(id);
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            Country? country = await _countryService.GetByIdAsync(id, email);
 
             if (country == null)
             {
@@ -66,9 +73,11 @@ namespace ManuscriptApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCountry(int id, CountryDto updatedCountry)
         {
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
             var entity = _mapper.Map<Country>(updatedCountry);
 
-            Country? updated = await _countryService.UpdateAsync(entity, id);
+            Country? updated = await _countryService.UpdateAsync(entity, id, email);
 
             if (updated == null)
             {
@@ -84,7 +93,9 @@ namespace ManuscriptApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCountry(int id)
         {
-            bool deleted = await _countryService.DeleteAsync(id);
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            bool deleted = await _countryService.DeleteAsync(id, email);
 
             if (!deleted)
             {

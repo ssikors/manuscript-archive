@@ -3,6 +3,7 @@ using ManuscriptApi.Business.MediatR.Queries;
 using ManuscriptApi.DapperDAL;
 using ManuscriptApi.DapperDAL.Repositories;
 using ManuscriptApi.Domain.Models;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace ManuscriptApi.Tests
@@ -11,15 +12,19 @@ namespace ManuscriptApi.Tests
     {
         private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<IUserAuthRepository> _userAuthRepositoryMock;
+        private readonly Mock<ILogger<RegisterUserCommandHandler>> _loggerMock;
         private readonly RegisterUserCommandHandler _handler;
 
         public RegisterUserCommandHandlerTests()
         {
             _userRepositoryMock = new Mock<IUserRepository>();
             _userAuthRepositoryMock = new Mock<IUserAuthRepository>();
+            _loggerMock = new Mock<ILogger<RegisterUserCommandHandler>>();
+
             _handler = new RegisterUserCommandHandler(
                 _userRepositoryMock.Object,
-                _userAuthRepositoryMock.Object
+                _userAuthRepositoryMock.Object,
+                _loggerMock.Object
             );
         }
 

@@ -13,14 +13,14 @@ namespace ManuscriptApi.Business.Services
 
     public interface IQueryService<T> : IService<T> where T : IModel
     {
-        Task<T?> GetByIdAsync(int id);
-        Task<IEnumerable<T?>> GetAllAsync();
+        Task<T?> GetByIdAsync(int id, string userEmail);
+        Task<IEnumerable<T?>> GetAllAsync(string userEmail);
     }
 
     public interface ICrudService<T> : IQueryService<T> where T : IModel
     {
-        Task<T> CreateAsync(T model);
-        Task<T?> UpdateAsync(T model, int id);
-        Task<bool> DeleteAsync(int id);
+        Task<T> CreateAsync(T model, string userEmail);
+        Task<T?> UpdateAsync(T model, int id, string userEmail);
+        Task<bool> DeleteAsync(int id, string userEmail);
     }
 }

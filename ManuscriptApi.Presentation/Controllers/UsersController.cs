@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Security.Claims;
+using AutoMapper;
 using ManuscriptApi.Business.DTOs;
 using ManuscriptApi.Business.MediatR.Queries;
 using ManuscriptApi.Business.Services;
@@ -27,7 +28,9 @@ namespace ManuscriptApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            var users = await _userService.GetAllAsync();
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            var users = await _userService.GetAllAsync(email);
             return Ok(users);
         }
 
@@ -37,8 +40,10 @@ namespace ManuscriptApi.Controllers
         [HttpPost]
         public async Task<ActionResult<User>> AddUser(UserDto userDto)
         {
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
             var user = _mapper.Map<User>(userDto);
-            var created = await _userService.CreateAsync(user);
+            var created = await _userService.CreateAsync(user, email);
             return CreatedAtAction(nameof(GetUser), new { id = created.Id }, created);
         }
 
@@ -48,7 +53,9 @@ namespace ManuscriptApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _userService.GetByIdAsync(id);
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            var user = await _userService.GetByIdAsync(id, email);
             if (user == null)
                 return NotFound();
 
@@ -61,8 +68,10 @@ namespace ManuscriptApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateUser(int id, UserDto updatedUser)
         {
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
             var entity = _mapper.Map<User>(updatedUser);
-            var updated = await _userService.UpdateAsync(entity, id);
+            var updated = await _userService.UpdateAsync(entity, id, email);
 
             if (updated == null)
                 return BadRequest("Could not update the user");
@@ -76,7 +85,9 @@ namespace ManuscriptApi.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteUser(int id)
         {
-            var deleted = await _userService.DeleteAsync(id);
+            var email = User.FindFirst(ClaimTypes.Email)!.Value;
+
+            var deleted = await _userService.DeleteAsync(id, email);
 
             if (!deleted)
                 return BadRequest("Could not delete the user");

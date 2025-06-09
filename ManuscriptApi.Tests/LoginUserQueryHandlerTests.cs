@@ -7,6 +7,7 @@ using ManuscriptApi.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Moq;
+using Microsoft.Extensions.Logging;
 
 namespace ManuscriptApi.Tests
 {
@@ -14,6 +15,7 @@ namespace ManuscriptApi.Tests
     {
         private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<IUserAuthRepository> _userAuthRepositoryMock;
+        private readonly Mock<ILogger<LoginUserQueryHandler>> _loggerMock;
         private readonly LoginUserQueryHandler _handler;
 
         public LoginUserQueryHandlerTests()
@@ -29,8 +31,14 @@ namespace ManuscriptApi.Tests
 
             _userRepositoryMock = new Mock<IUserRepository>();
             _userAuthRepositoryMock = new Mock<IUserAuthRepository>();
+            _loggerMock = new Mock<ILogger<LoginUserQueryHandler>>();
 
-            _handler = new LoginUserQueryHandler(jwtOptions, _userRepositoryMock.Object, _userAuthRepositoryMock.Object);
+            _handler = new LoginUserQueryHandler(
+                jwtOptions,
+                _userRepositoryMock.Object,
+                _userAuthRepositoryMock.Object,
+                _loggerMock.Object
+            );
         }
 
         [Fact]

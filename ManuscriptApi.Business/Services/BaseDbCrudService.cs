@@ -14,14 +14,14 @@ namespace ManuscriptApi.Business.Services
             _context = context;
         }
 
-        public async Task<T> CreateAsync(T model)
+        public async Task<T> CreateAsync(T model, string userEmail)
         {
             await _context.AddAsync(model);
             await _context.SaveChangesAsync();
             return model;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, string userEmail)
         {
             var entity = await _context.Set<T>().FindAsync(id);
             if (entity == null)
@@ -32,17 +32,17 @@ namespace ManuscriptApi.Business.Services
             return true;
         }
 
-        public async Task<IEnumerable<T?>> GetAllAsync()
+        public async Task<IEnumerable<T?>> GetAllAsync(string userEmail)
         {
             return await _context.Set<T>().ToListAsync();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public async Task<T?> GetByIdAsync(int id, string userEmail)
         {
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task<T?> UpdateAsync(T model, int id)
+        public async Task<T?> UpdateAsync(T model, int id, string userEmail)
         {
             var existing = await _context.Set<T>().FindAsync(id);
             if (existing == null)
