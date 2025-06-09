@@ -1,6 +1,7 @@
 ﻿using ManuscriptApi.Business.Services;
 using ManuscriptApi.DapperDAL.Repositories;
 using ManuscriptApi.DapperDAL;
+using ManuscriptApi.Domain.Services;
 
 namespace ManuscriptApi.Presentation.Extensions
 {

@@ -78,7 +78,7 @@ namespace ManuscriptApi.Business.MediatR.Queries
             var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.NameIdentifier, userAuth.Id.ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Role, user.IsModerator ? UserRoles.Moderator : UserRoles.User)
         };
 

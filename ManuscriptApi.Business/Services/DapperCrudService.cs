@@ -1,5 +1,6 @@
 ﻿
 using ManuscriptApi.DapperDAL;
+using ManuscriptApi.Domain.Services;
 using Microsoft.Extensions.Logging;
 
 namespace ManuscriptApi.Business.Services

@@ -34,6 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ManuscriptApi.Domain\ManuscriptApi.Domain.csproj" />
     <ProjectReference Include="..\ManuscriptApi.EFCoreDAL\ManuscriptApi.EFCoreDAL.csproj" />
     <ProjectReference Include="..\ManuscriptApi.Business\ManuscriptApi.Business.csproj" />
     <ProjectReference Include="..\ManuscriptApi.DapperDAL\ManuscriptApi.DapperDAL.csproj" />

@@ -1,4 +1,5 @@
 ﻿
+using ManuscriptApi.Domain.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace ManuscriptApi.Business.Services
