@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using ManuscriptApi.DataAccess.Models;
-
+﻿
 public class User : IModel
 {
     public int Id { get; set; }

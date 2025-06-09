@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManuscriptApi.Presentation"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManuscriptApi.Business", "..\ManuscriptApi.Business\ManuscriptApi.Business.csproj", "{11CD5694-60D8-4D47-9CFF-582E0C09FEC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManuscriptApi.Domain", "..\ManuscriptApi.DataAccess\ManuscriptApi.Domain.csproj", "{01E4BA9C-4E66-475C-9EAD-9323C7F07CF8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManuscriptApi.Domain", "..\ManuscriptApi.Domain\ManuscriptApi.Domain.csproj", "{01E4BA9C-4E66-475C-9EAD-9323C7F07CF8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManuscriptApi.DapperDAL", "..\ManuscriptApi.DapperDAL\ManuscriptApi.DapperDAL.csproj", "{5AF78EE0-1D19-4EA5-BE80-152F8A6A95D9}"
 EndProject

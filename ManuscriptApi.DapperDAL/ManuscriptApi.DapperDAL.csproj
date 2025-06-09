@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ManuscriptApi.DataAccess\ManuscriptApi.Domain.csproj" />
+    <ProjectReference Include="..\ManuscriptApi.Domain\ManuscriptApi.Domain.csproj" />
   </ItemGroup>
 
 </Project>
