@@ -7,6 +7,7 @@ using ManuscriptApi.Business.MediatR.Queries;
 using ManuscriptApi.Business.Services;
 using ManuscriptApi.DapperDAL;
 using ManuscriptApi.DapperDAL.Repositories;
+using ManuscriptApi.Presentation.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Data.SqlClient;
@@ -121,25 +122,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IDbConnection>(sp =>
     new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<ICountryRepository, CountryRepository>();
-builder.Services.AddScoped<ICrudService<Country>, CountryService>();
-
-builder.Services.AddScoped<ILocationRepository, LocationRepository>();
-builder.Services.AddScoped<ICrudService<Location>, LocationService>();
-
-builder.Services.AddScoped<ITagRepository, TagRepository>();
-builder.Services.AddScoped<ICrudService<Tag>, TagService>();
-
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<ICrudService<User>, UserService>();
-
-builder.Services.AddScoped<IImageRepository, ImageRepository>();
-builder.Services.AddScoped<ICrudService<Image>, ImageService>();
-
-builder.Services.AddScoped<IManuscriptRepository, ManuscriptRepository>();
-builder.Services.AddScoped<ICrudService<Manuscript>, ManuscriptService>();
-
-builder.Services.AddScoped<IUserAuthRepository, UserAuthRepository>();
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 

@@ -37,8 +37,4 @@
     <ProjectReference Include="..\ManuscriptApi.EFCoreDAL\ManuscriptApi.EFCoreDAL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-  </ItemGroup>
-
 </Project>
