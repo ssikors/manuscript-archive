@@ -4,9 +4,6 @@ using FluentValidation;
 using ManuscriptApi.Business.MediatR;
 using ManuscriptApi.Business.MediatR.Commands;
 using ManuscriptApi.Business.MediatR.Queries;
-using ManuscriptApi.Business.Services;
-using ManuscriptApi.DapperDAL;
-using ManuscriptApi.DapperDAL.Repositories;
 using ManuscriptApi.Presentation.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,10 +14,8 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen
 (
@@ -111,18 +106,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-// builder.Services.AddDbContext<ManuscriptDbContext>(options =>
-//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 
 // Connection for repositories
 builder.Services.AddScoped<IDbConnection>(sp =>
     new SqlConnection(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddApplicationServices();
+// Extensions
+builder.Services.AddRepositories();
+builder.Services.AddCrudServices();
 
 var app = builder.Build();
 
