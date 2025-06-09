@@ -1,8 +1,8 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
 using ManuscriptApi.Business.DTOs;
-using ManuscriptApi.Business.MediatR.Queries;
 using ManuscriptApi.Business.Services;
+using ManuscriptApi.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,6 +1,5 @@
 using FluentValidation;
 using ManuscriptApi.Business.MediatR.Commands;
-using ManuscriptApi.Business.MediatR.Queries;
 using ManuscriptApi.Business.MediatR;
 using ManuscriptApi.Presentation.Extensions;
 using MediatR;
@@ -12,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Data;
 using System.Text;
+using ManuscriptApi.Domain.Models;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()

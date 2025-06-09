@@ -17,19 +17,6 @@ using Microsoft.Extensions.Logging;
 
 namespace ManuscriptApi.Business.MediatR.Queries
 {
-    public class JwtSettings
-    {
-        public required string Token { get; set; }
-        public required string Issuer { get; set; }
-        public required string Audience { get; set; }
-    }
-
-    public static class UserRoles
-    {
-        public const string User = "User";
-        public const string Moderator = "Moderator";
-    }
-
     public class LoginUserQueryHandler : IRequestHandler<LoginUserQuery, string?>
     {
         private readonly string _token;
